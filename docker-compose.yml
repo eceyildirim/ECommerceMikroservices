@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"      # RabbitMQ port
+      - "15672:15672"    # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  postgres-orders:
+    image: postgres
+    container_name: postgres-orders
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: ordersdb
+    ports:
+      - "5433:5432" # Host:Container
+    volumes:
+      - pgdata-orders:/var/lib/postgresql/data
+
+  postgres-stock:
+    image: postgres
+    container_name: postgres-stock
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: stockdb
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata-stock:/var/lib/postgresql/data
+
+  postgres-notification:
+    image: postgres
+    container_name: postgres-notification
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: notificationdb
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata-notification:/var/lib/postgresql/data
+
+volumes:
+  pgdata-orders:
+  pgdata-stock:
+  pgdata-notification:

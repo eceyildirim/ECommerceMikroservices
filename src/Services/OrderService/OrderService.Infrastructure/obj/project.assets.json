@@ -1,0 +1,96 @@
+{
+  "version": 3,
+  "targets": {
+    "net9.0": {
+      "OrderService.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/OrderService.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/OrderService.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "OrderService.Domain/1.0.0": {
+      "type": "project",
+      "path": "../OrderService.Domain/OrderService.Domain.csproj",
+      "msbuildProject": "../OrderService.Domain/OrderService.Domain.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net9.0": [
+      "OrderService.Domain >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "/Users/eceakgun/.nuget/packages/": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Infrastructure/OrderService.Infrastructure.csproj",
+      "projectName": "OrderService.Infrastructure",
+      "projectPath": "/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Infrastructure/OrderService.Infrastructure.csproj",
+      "packagesPath": "/Users/eceakgun/.nuget/packages/",
+      "outputPath": "/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Infrastructure/obj/",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "/Users/eceakgun/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net9.0"
+      ],
+      "sources": {
+        "/usr/local/share/dotnet/library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "projectReferences": {
+            "/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/OrderService.Domain.csproj": {
+              "projectPath": "/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/OrderService.Domain.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "9.0.100"
+    },
+    "frameworks": {
+      "net9.0": {
+        "targetAlias": "net9.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

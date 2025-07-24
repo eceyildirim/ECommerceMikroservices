@@ -1,0 +1,12 @@
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/bin/Debug/net9.0/OrderService.Domain.deps.json
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/bin/Debug/net9.0/OrderService.Domain.dll
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/bin/Debug/net9.0/OrderService.Domain.pdb
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/OrderService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/OrderService.Domain.AssemblyInfoInputs.cache
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/OrderService.Domain.AssemblyInfo.cs
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/OrderService.Domain.csproj.CoreCompileInputs.cache
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/OrderService.Domain.sourcelink.json
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/OrderService.Domain.dll
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/refint/OrderService.Domain.dll
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/OrderService.Domain.pdb
+/Users/eceakgun/Projects/ECommerceMicroservices/src/Services/OrderService/OrderService.Domain/obj/Debug/net9.0/ref/OrderService.Domain.dll
