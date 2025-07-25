@@ -1,6 +1,8 @@
 # Build sonuçları
 bin/
 obj/
+**/bin/
+**/obj/
 
 # Visual Studio cache ve ayar dosyaları
 .vs/
