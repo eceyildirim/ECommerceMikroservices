@@ -1,0 +1,81 @@
+# Build sonuçları
+bin/
+obj/
+**/bin/
+**/obj/
+
+# Visual Studio cache ve ayar dosyaları
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider IDE dosyaları
+.idea/
+
+# VS Code ayarları
+.vscode/
+
+# Debug dosyaları
+*.pdb
+*.mdb
+
+# Yayın klasörleri
+publish/
+
+# Paket ve bağımlılık klasörleri
+packages/
+*.nupkg
+*.snupkg
+
+# NuGet
+.nuget/
+
+# Dotnet local tool cache
+.tool/
+
+# Log dosyaları
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# OS dosyaları
+.DS_Store
+Thumbs.db
+
+# Docker dosyaları (isteğe bağlı)
+docker-compose.override.yml
+
+# Entity Framework migrations snapshot dosyaları (isteğe bağlı)
+*.Snapshot.cs
+
+# User secrets
+secrets.json
+
+# Test sonuçları
+TestResults/
+
+# Resharper
+_ReSharper*/
+
+# SonarQube
+.sonar/
+
+# Mac sistem dosyaları
+.AppleDouble
+.LSOverride
+
+# Paket lock dosyaları (isteğe bağlı)
+package-lock.json
+yarn.lock
+
+# EF Core design dosyaları
+*.Designer.cs
+
+# Publish klasörü (deployment sonrası)
+publish/
+
