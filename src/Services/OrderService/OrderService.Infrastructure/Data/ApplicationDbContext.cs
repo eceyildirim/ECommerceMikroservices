@@ -64,11 +64,13 @@ public class ApplicationDbContext : DbContext
             builder.Property(a => a.AddressLine2)
                 .HasMaxLength(500);
 
+            builder.HasOne(a => a.Customer)        
+                .WithMany(c => c.Addresses)        
+                .HasForeignKey(a => a.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);           
+
             builder.Property(a => a.PostalCode)
                 .HasMaxLength(10);
-
-            builder.Property(a => a.CustomerId)
-                .IsRequired();
 
             builder.HasOne(a => a.Country)
                 .WithMany()
@@ -137,10 +139,11 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(o => o.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(c => c.Addresses)
-                .WithOne()
-                .HasForeignKey(a => a.CustomerId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(c => c.Addresses)     
+                .WithOne(a => a.Customer)          
+                .HasForeignKey(a => a.CustomerId)  
+                .IsRequired()                      
+                .OnDelete(DeleteBehavior.Cascade); 
         });
 
         modelBuilder.Entity<Country>(builder =>

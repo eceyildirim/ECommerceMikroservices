@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using OrderService.Application.Contract;
+using OrderService.Domain.Contracts;
 using OrderService.Infrastructure.Data;
 
 namespace OrderService.Infrastructure.Repositories;

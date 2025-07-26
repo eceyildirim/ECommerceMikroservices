@@ -1,4 +1,4 @@
-namespace OrderService.Application.Contract;
+namespace OrderService.Application.Contracts;
 
 public interface IUnitOfWork : IAsyncDisposable
 {

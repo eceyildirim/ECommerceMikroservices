@@ -7,11 +7,12 @@ public class Address : BaseEntity
     public Guid ProvinceId { get; set; }
     public Guid DistrictId { get; set; }
     public Guid NeighborhoodId { get; set; }
-    public string  AddressLine { get; set; }
-    public string  AddressLine2 { get; set; }
+    public string AddressLine { get; set; }
+    public string AddressLine2 { get; set; }
     public string PostalCode { get; set; }
     public Country Country { get; set; }
     public Province Province { get; set; }
     public District District { get; set; }
     public Neighborhood Neighborhood { get; set; }
+    public Customer Customer { get; set; }
 }

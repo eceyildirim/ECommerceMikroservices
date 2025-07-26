@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace OrderService.Application.Contract;
+namespace OrderService.Domain.Contracts;
 
 public interface IRepository<TEntity> where TEntity : class
 {

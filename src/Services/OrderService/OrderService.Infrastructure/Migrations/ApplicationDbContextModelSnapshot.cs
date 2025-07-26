@@ -1120,7 +1120,7 @@ namespace OrderService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OrderService.Domain.Entities.Customer", null)
+                    b.HasOne("OrderService.Domain.Entities.Customer", "Customer")
                         .WithMany("Addresses")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1145,6 +1145,8 @@ namespace OrderService.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Country");
+
+                    b.Navigation("Customer");
 
                     b.Navigation("District");
 
