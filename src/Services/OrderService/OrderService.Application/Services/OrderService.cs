@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Http.Features;
@@ -15,14 +16,16 @@ public class OrderService : IOrderService
     private readonly IRabbitMQPublisherService _rabbitMQPublisherService;
     private readonly IOrderRepository _orderRepository;
     private readonly IRepository<OrderItem> _orderItemRepository;
+    private readonly IRepository<Customer> _customerRepository;
     private readonly IMapper _mapper;
-    public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IRepository<OrderItem> orderItemRepository, IMapper mapper, IRabbitMQPublisherService rabbitMQPublisherService)
+    public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IRepository<OrderItem> orderItemRepository, IRepository<Customer> customerRepository, IMapper mapper, IRabbitMQPublisherService rabbitMQPublisherService)
     {
         _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
         _mapper = mapper;
         _rabbitMQPublisherService = rabbitMQPublisherService;
+        _customerRepository = customerRepository;
     }
     public async Task<OrderDto> GetOrderById(Guid id)
     {
@@ -84,6 +87,24 @@ public class OrderService : IOrderService
         };
 
         await _rabbitMQPublisherService.PublishStockUpdateAsync(stockUpdateMessage);
+
+        orderDto.Customer = await _customerRepository.GetByIdAsync(orderRequestModel.CustomerId);
+
+        if (orderDto.Customer == null)
+            return new Exception();
+
+        //Notification için queueya istek at.
+        //Hem Email'de hem SMS'de kullanılabilsin.
+        var notificationMessage = new NotificationMessage
+        {
+            ChannelTypes = new List<ChannelType>
+            {
+                ChannelType.Email, ChannelType.SMS
+            },
+            Order = orderDto
+        };
+
+        await _rabbitMQPublisherService.PublishNotificaitionRequestAsync(notificationMessage);
 
         return orderDto;
     }

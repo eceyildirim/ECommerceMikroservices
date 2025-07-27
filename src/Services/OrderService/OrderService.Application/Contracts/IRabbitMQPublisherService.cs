@@ -4,7 +4,7 @@ namespace OrderService.Application.Contracts;
 
 public interface IRabbitMQPublisherService : IAsyncDisposable
 {
-    Task ConnectAsync();
+    Task PublishNotificaitionRequestAsync(NotificationMessage message);
     Task PublishStockUpdateAsync(StockUpdateMessage message);
 
     ValueTask DisposeAsync();
