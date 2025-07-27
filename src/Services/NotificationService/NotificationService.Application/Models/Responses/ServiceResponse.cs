@@ -1,10 +1,11 @@
-namespace StockService.Application.Models.Responses;
+namespace Notification.Application.Models.Responses;
 
 public class ServiceResponse
 {
     public bool Successed { get; set; } = true;
 
     public short Code { get; set; }
+
     public string Message { get; set; }
 
     public dynamic Errors { get; set; }

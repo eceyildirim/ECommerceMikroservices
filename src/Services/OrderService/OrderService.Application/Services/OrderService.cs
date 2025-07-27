@@ -1,5 +1,6 @@
 using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Http.Features;
 using OrderService.Application.Contracts;
 using OrderService.Application.Models;
 using OrderService.Application.Models.Requests;
@@ -11,16 +12,17 @@ namespace OrderService.Application.Services;
 public class OrderService : IOrderService
 {
     private readonly IUnitOfWork _unitOfWork;
-
+    private readonly IRabbitMQPublisherService _rabbitMQPublisherService;
     private readonly IOrderRepository _orderRepository;
     private readonly IRepository<OrderItem> _orderItemRepository;
     private readonly IMapper _mapper;
-    public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IRepository<OrderItem> orderItemRepository, IMapper mapper)
+    public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IRepository<OrderItem> orderItemRepository, IMapper mapper, IRabbitMQPublisherService rabbitMQPublisherService)
     {
         _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
         _mapper = mapper;
+        _rabbitMQPublisherService = rabbitMQPublisherService;
     }
     public async Task<OrderDto> GetOrderById(Guid id)
     {
@@ -69,6 +71,19 @@ public class OrderService : IOrderService
         await _unitOfWork.SaveChangesAsync();
 
         var orderDto = _mapper.Map<OrderDto>(order);
+
+        //Sipariş oluşturulduktan sonra stok düşürmek için queue'ya data gönderilir.
+        var stockUpdateMessage = new StockUpdateMessage
+        {
+            OrderId = orderDto.Id,
+            Items = orderDto.Items.Select(i => new OrderItemDto
+            {
+                ProductId = i.ProductId,
+                Quantity = i.Quantity
+            }).ToList()
+        };
+
+        await _rabbitMQPublisherService.PublishStockUpdateAsync(stockUpdateMessage);
 
         return orderDto;
     }
@@ -126,5 +141,5 @@ public class OrderService : IOrderService
         await _unitOfWork.CommitTransactionAsync();
 
         return true;
-    }    
+    }
 }

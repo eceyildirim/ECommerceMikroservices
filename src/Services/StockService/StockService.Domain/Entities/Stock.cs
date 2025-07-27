@@ -1,11 +1,11 @@
 namespace StockService.Domain.Entities;
 
-public class Stock
+public class Stock : BaseEntity
 {
-    public Guid Id { get; set; }                 
-    public Guid ProductId { get; set; }          
+    public Guid Id { get; set; }
+    public Guid ProductId { get; set; }
 
-    public int QuantityAvailable { get; set; }   
+    public int QuantityAvailable { get; set; }
     public int ReservedQuantity { get; set; }
     public DateTime LastUpdated { get; set; }
 

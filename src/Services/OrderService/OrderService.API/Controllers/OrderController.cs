@@ -51,8 +51,7 @@ public class OrderController : BaseController<OrderController>
         if (!deleted)
             return NotFound();
 
-        return NoContent(); 
+        return NoContent();
     }
-
 }
 
