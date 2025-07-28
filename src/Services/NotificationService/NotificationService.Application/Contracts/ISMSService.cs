@@ -3,5 +3,5 @@ namespace NotificationService.Application.Contracts;
 
 public interface ISMSService
 {
-    Task<bool> SendSuccessOrderSMSAsync(OrderSMSRequestModel requestModel);
+    Task<bool> SendSMSAsync(OrderSMSRequestModel requestModel);
 }

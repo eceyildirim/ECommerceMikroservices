@@ -29,7 +29,7 @@ public class SMSService : ISMSService
         _from = configuration["Twilio:FromPhoneNumber"]!;
         _mapper = mapper;
     }
-    private async Task SendOrderSMS(OrderSMSRequestModel requestModel, string message)
+    private async Task<bool> SendOrderSMS(OrderSMSRequestModel requestModel, string message)
     {
         SMSDto smsDto = new SMSDto
         {
@@ -98,19 +98,20 @@ public class SMSService : ISMSService
     public async Task<bool> SendSMSAsync(OrderSMSRequestModel requestModel)
     {
 
+        var message = "";
 
         switch (requestModel.Order.OrderStatus)
         {
             case OrderStatus.OperationalCancelled:
-                var message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} numaralı siparişiniz operasyonel süreçlerden iptal edilmiştir. Teşekkür ederiz.";
+                message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} numaralı siparişiniz operasyonel süreçlerden iptal edilmiştir. Teşekkür ederiz.";
                 await SendOrderSMS(requestModel, message);
                 break;
             case OrderStatus.Completed:
-                var message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} siparişiniz başarıyla onaylandı. Teşekkür ederiz.";
+                message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} siparişiniz başarıyla onaylandı. Teşekkür ederiz.";
                 await SendOrderSMS(requestModel, message);
                 break;
             case OrderStatus.Cancelled:
-                var message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} siparişiniz talebiniz üzerine iptal edilmiştir. Teşekkür ederiz.";
+                message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} siparişiniz talebiniz üzerine iptal edilmiştir. Teşekkür ederiz.";
                 await SendOrderSMS(requestModel, message);
                 break;
         }

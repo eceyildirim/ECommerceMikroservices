@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.Application.Contracts;
 using NotificationService.Application.Models.Requests;
@@ -24,9 +25,14 @@ public class NotificationController : BaseController<NotificationController>
     }
 
     [HttpPost, Route("send-sms")]
-    public async Task<IActionResult> SendSMS([FromBody] OrderMSRequestModel smsRequestModel)
+    public async Task<IActionResult> SendSMS([FromBody] OrderSMSRequestModel smsRequestModel)
     {
-        return Ok(await _smsService.SendEmailAsync(smsRequestModel));
+        var result = await _smsService.SendSMSAsync(smsRequestModel);
+
+        if (!result)
+            return BadRequest();
+
+        return Ok();
     }
 
 }

@@ -29,7 +29,7 @@ public class EmailService : IEmailService
         string template = await File.ReadAllTextAsync("Templates/OrderOperationCancelled.html");
 
         template = template.Replace("{{CustomerNameSurname}}", requestModel.Order.CustomerNameSurname)
-                    .Replace("{{OrderId}}", requestModel.Order.Id);
+                    .Replace("{{OrderId}}", requestModel.Order.Id.ToString());
 
         EmailDto emailDto = new EmailDto
         {
@@ -98,7 +98,7 @@ public class EmailService : IEmailService
         string template = await File.ReadAllTextAsync("Templates/OrderOperationCancelled.html");
 
         template = template.Replace("{{CustomerNameSurname}}", requestModel.Order.CustomerNameSurname)
-                    .Replace("{{OrderId}}", requestModel.Order.Id);
+                    .Replace("{{OrderId}}", requestModel.Order.Id.ToString());
 
         EmailDto emailDto = new EmailDto
         {
