@@ -53,6 +53,20 @@ public class StockQueueConsumer : IDisposable
 
                 var response = await _httpClient.PutAsJsonAsync("api/stock/update-stock", stockUpdate);
 
+                //stoktan başarısız cevap dönerse OrderService'e UpdateStatus isteği gönder. OrderStatus: 3 (operasyonel iptal)'a çekilsin.
+                if (!response.IsSuccess)
+                {
+                    var updateOrderRequestModel = new UpdateOrderRequestModel
+                    {
+                        OrderId = stockUpdate.OrderId,
+                        OrderStatus = OrderStatus.OperationalCancelled
+                    };
+
+                    var updateOrderStatus = await _httpClient.PutAsJsonAsync("api/order/update-status", updateOrderRequestModel);
+
+                    //Order için başarısız notification dön.  
+                }
+
             }
 
             // Mesaj işlendi olarak işaretle (ack)

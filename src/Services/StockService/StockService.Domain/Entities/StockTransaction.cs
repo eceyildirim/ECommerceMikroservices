@@ -5,11 +5,9 @@ namespace StockService.Domain.Entities;
 public class StockTransaction
 {
     public Guid Id { get; set; }
-    public Guid ProductId { get; set; }
     public Guid? OrderId { get; set; }
-    public int QuantityChanged { get; set; } // +/-
-    public StockTransactionType Type { get; set; } // Reserve, Commit, Release, ManualAdjust...
-    public DateTime OccurredAt { get; set; }
-    public string? Reason { get; set; }
-    public Product Product { get; set; } = null!;
+    public int Quantity { get; set; }
+    public StockTransactionType Type { get; set; } // Order, Cancel, Add
+    public Guid StockId { get; set; }
+    public Stock Stock { get; set; }
 }

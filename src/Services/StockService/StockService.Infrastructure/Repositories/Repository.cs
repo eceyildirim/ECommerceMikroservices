@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using StockService.Infrastructure.Data;
 using StockService.Domain.Contracts;
-namespace StockService.Infrastructure;
+namespace StockService.Infrastructure.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {

@@ -2,8 +2,8 @@ namespace StockService.Domain.Enums;
 
 public enum StockTransactionType
 {
-    Reserve = 1,
-    Commit = 2,
-    Release = 3,
-    Adjust = 4
+    Order = 1, //sipariş alındı
+    Cancel = 2, //sipariş iptali
+    Add = 3, //sisteme stok girildi.
+    Delete = 4 //sistemden stok çıkarıldı
 }
