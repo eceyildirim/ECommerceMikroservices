@@ -33,7 +33,7 @@ public class RabbitMQPublisherService : IRabbitMQPublisherService
         );
     }
 
-    public async Task PublishStockUpdateAsync(StockUpdateMessage message, )
+    public async Task PublishStockUpdateAsync(StockUpdateMessage message)
     {
         await StockQueueConfiguration();
         if (_channel == null)
@@ -48,7 +48,7 @@ public class RabbitMQPublisherService : IRabbitMQPublisherService
         //Exchange boş bırakılırsa default exchange'e gider.
         await _channel.BasicPublishAsync(
             "",
-            routingKey: _queueName,
+            routingKey: "stock_queue",
             mandatory: false,
             properties,
             body: body
@@ -92,7 +92,7 @@ public class RabbitMQPublisherService : IRabbitMQPublisherService
         //Exchange boş bırakılırsa default exchange'e gider.
         await _channel.BasicPublishAsync(
             "",
-            routingKey: _queueName,
+            routingKey: "notification-queue",
             mandatory: false,
             properties,
             body: body

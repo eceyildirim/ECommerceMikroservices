@@ -3,9 +3,7 @@ namespace OrderService.Domain.Enums;
 public enum OrderStatus
 {
     Pending = 0,        // Sipariş alındı, işlem bekleniyor
-    Processing = 1,     // Sipariş işleniyor
-    Shipped = 2,        // Kargoya verildi
-    Delivered = 3,      // Teslim edildi
-    Cancelled = 4,      // Müşteri iptal etti
-    Failed = 5          // Ödeme veya işlem hatası
+    Completed = 1,     // Sipariş hazırlanıyor
+    Cancelled = 2,     // Müşteri siparişi iptal etti
+    OperationalCancelled = 3 // Sipariş sistem tarafından stok yetersizliğinden iptal edildi
 }

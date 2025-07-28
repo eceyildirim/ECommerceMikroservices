@@ -7,6 +7,7 @@ using OrderService.Application.Models;
 using OrderService.Application.Models.Requests;
 using OrderService.Domain.Contracts;
 using OrderService.Domain.Entities;
+using OrderService.Domain.Enums;
 
 namespace OrderService.Application.Services;
 
@@ -88,23 +89,24 @@ public class OrderService : IOrderService
 
         await _rabbitMQPublisherService.PublishStockUpdateAsync(stockUpdateMessage);
 
-        orderDto.Customer = await _customerRepository.GetByIdAsync(orderRequestModel.CustomerId);
+        // orderDto.Customer = await _customerRepository.GetByIdAsync(orderRequestModel.CustomerId);
 
-        if (orderDto.Customer == null)
-            return new Exception();
+        //TODO:ECE
+        // if (orderDto.Customer == null)
+        //     return null;
 
         //Notification için queueya istek at.
         //Hem Email'de hem SMS'de kullanılabilsin.
-        var notificationMessage = new NotificationMessage
-        {
-            ChannelTypes = new List<ChannelType>
-            {
-                ChannelType.Email, ChannelType.SMS
-            },
-            Order = orderDto
-        };
+        // var notificationMessage = new NotificationMessage
+        // {
+        //     ChannelTypes = new List<ChannelType>
+        //     {
+        //         ChannelType.Email, ChannelType.SMS
+        //     },
+        //     Order = orderDto
+        // };
 
-        await _rabbitMQPublisherService.PublishNotificaitionRequestAsync(notificationMessage);
+        // await _rabbitMQPublisherService.PublishNotificaitionRequestAsync(notificationMessage);
 
         return orderDto;
     }
@@ -150,6 +152,28 @@ public class OrderService : IOrderService
         await _orderRepository.UpdateAsync(newOrder);
 
         return true;
+    }
+
+    public async Task UpdateStatusAsync(UpdateOrderRequestModel model)
+    {
+        var currentOrder = await _orderRepository.GetOrderWithItemsByIdAsync(model.OrderId);
+
+        currentOrder.OrderStatus = model.OrderStatus;
+
+        await _orderRepository.UpdateAsync(currentOrder);
+
+        //Notification için queueya istek at.
+        //Hem Email'de hem SMS'de kullanılabilsin.
+        var notificationMessage = new NotificationMessage
+        {
+            ChannelTypes = new List<ChannelType>
+            {
+                ChannelType.Email, ChannelType.SMS
+            },
+            Order = currentOrder
+        };
+
+        await _rabbitMQPublisherService.PublishNotificaitionRequestAsync(notificationMessage);
     }
 
     public async Task<bool> DeleteOrderAsync(Guid id)
