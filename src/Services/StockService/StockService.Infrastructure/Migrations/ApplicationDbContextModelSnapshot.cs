@@ -45,17 +45,110 @@ namespace StockService.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("Sku")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000001"),
+                            BasePrice = 9925.06m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Laptop"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000002"),
+                            BasePrice = 14860.37m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Akıllı Telefon"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000003"),
+                            BasePrice = 4061.84m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Tablet"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000004"),
+                            BasePrice = 11921.34m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Bluetooth Kulaklık"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000005"),
+                            BasePrice = 7505.19m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Akıllı Saat"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000006"),
+                            BasePrice = 3827.2m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Harici Disk"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000007"),
+                            BasePrice = 4091.75m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Kamera"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000008"),
+                            BasePrice = 5943.31m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Oyun Konsolu"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000009"),
+                            BasePrice = 8054.15m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "SSD Disk"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000010"),
+                            BasePrice = 14925.49m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Kablosuz Mouse"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000011"),
+                            BasePrice = 3397.15m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Akıllı Saat"
+                        },
+                        new
+                        {
+                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000012"),
+                            BasePrice = 6796.93m,
+                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Laptop Çantası"
+                        });
                 });
 
             modelBuilder.Entity("StockService.Domain.Entities.Stock", b =>

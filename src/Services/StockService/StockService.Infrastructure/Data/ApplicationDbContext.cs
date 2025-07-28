@@ -18,10 +18,6 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
 
-            entity.Property(e => e.Sku)
-                .IsRequired()
-                .HasMaxLength(50);
-
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(200);
