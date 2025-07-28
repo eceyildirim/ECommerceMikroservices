@@ -7,7 +7,7 @@ using OrderService.Application.Models;
 using OrderService.Application.Models.Requests;
 using OrderService.Domain.Contracts;
 using OrderService.Domain.Entities;
-using OrderService.Domain.Enums;
+using OrderService.Common.Enums;
 
 namespace OrderService.Application.Services;
 
@@ -47,7 +47,7 @@ public class OrderService : IOrderService
             Id = Guid.NewGuid(),
             CustomerId = orderRequestModel.CustomerId,
             IsDeleted = false,
-            Status = Domain.Enums.OrderStatus.Pending,
+            Status = OrderStatus.Pending,
             OrderDate = orderRequestModel.OrderDate,
             TotalAmount = orderRequestModel.TotalAmount,
             Items = new List<OrderItem>(),

@@ -1,4 +1,4 @@
-namespace OrderService.Domain.Enums;
+namespace OrderService.Common.Enums;
 
 public enum OrderStatus
 {
