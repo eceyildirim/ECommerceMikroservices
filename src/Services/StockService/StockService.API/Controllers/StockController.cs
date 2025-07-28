@@ -15,18 +15,6 @@ public class StockController : ControllerBase
         _stockService = stockService;
     }
 
-    //Stok kontrolü yap ve yeterliyse gelen stok miktarını rezerve et
-    // [HttpPost, Route("check-and-reserve-stock")]
-    // public async Task<IActionResult> CheckAndReserveStock([FromBody] CheckAndReservceStockRequest request)
-    // {
-    //     var result = await _stockService.CheckAndReserveStockAsync(request);
-
-    //     if (result == null)
-    //         return Conflict(result);
-
-    //     return Ok(result);
-    // }
-
     [HttpPut, Route("update-stock")]
     public async Task<IActionResult> UpdateStock([FromBody] UpdateStockRequestModel requestModel)
     {
