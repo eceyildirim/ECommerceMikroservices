@@ -88,35 +88,11 @@ public class OrderService : IOrderService
         };
 
         await _rabbitMQPublisherService.PublishStockUpdateAsync(stockUpdateMessage);
-
-        // orderDto.Customer = await _customerRepository.GetByIdAsync(orderRequestModel.CustomerId);
-
-        //TODO:ECE
-        // if (orderDto.Customer == null)
-        //     return null;
-
-        //Notification için queueya istek at.
-        //Hem Email'de hem SMS'de kullanılabilsin.
-        // var notificationMessage = new NotificationMessage
-        // {
-        //     ChannelTypes = new List<ChannelType>
-        //     {
-        //         ChannelType.Email, ChannelType.SMS
-        //     },
-        //     Order = orderDto
-        // };
-
-        // await _rabbitMQPublisherService.PublishNotificaitionRequestAsync(notificationMessage);
-
         return orderDto;
     }
 
     public async Task<bool> UpdateOrderAsync(Guid id, OrderRequestModel model)
     {
-        // var currentOrder = await _orderRepository.GetOrderWithItemsByIdAsync(id);
-        // if (currentOrder == null)
-        //     return false;
-
         var newOrder = new Order
         {
             Id = id,
@@ -143,12 +119,6 @@ public class OrderService : IOrderService
             );
         }
 
-        // _mapper.Map(newOrder, currentOrder);
-        // _orderRepository.Update(currentOrder);
-
-        // foreach(var item in currentOrder.Items)
-        //     _orderItemRepository.Update(item);
-
         await _orderRepository.UpdateAsync(newOrder);
 
         return true;
@@ -158,7 +128,7 @@ public class OrderService : IOrderService
     {
         var currentOrder = await _orderRepository.GetOrderWithItemsByIdAsync(model.OrderId);
 
-        currentOrder.OrderStatus = model.OrderStatus;
+        currentOrder.Status = model.OrderStatus;
 
         await _orderRepository.UpdateAsync(currentOrder);
 
@@ -170,7 +140,7 @@ public class OrderService : IOrderService
             {
                 ChannelType.Email, ChannelType.SMS
             },
-            Order = currentOrder
+            Order = _mapper.Map<OrderDto>(currentOrder)
         };
 
         await _rabbitMQPublisherService.PublishNotificaitionRequestAsync(notificationMessage);

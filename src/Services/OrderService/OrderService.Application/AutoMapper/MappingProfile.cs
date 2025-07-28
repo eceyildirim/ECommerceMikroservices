@@ -27,7 +27,6 @@ public class MappingProfile : Profile
 
         CreateMap<OrderItem, OrderItemDto>();
 
-        CreateMap<Product, ProductDto>();
         CreateMap<Province, ProvinceDto>();
 
 

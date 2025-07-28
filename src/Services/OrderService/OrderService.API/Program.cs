@@ -6,6 +6,7 @@ using OrderService.Application.Contracts;
 using OrderService.Domain.Contracts;
 using OrderService.Infrastructure.Data;
 using OrderService.Infrastructure.Repositories;
+using OrderService.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddScoped<IOrderService, OrderService.Application.Services.Orde
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+builder.Services.Configure<AppSettingsModel>(builder.Configuration);
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

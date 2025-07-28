@@ -1,3 +1,4 @@
+using OrderService.Domain.Enums;
 namespace OrderService.Application.Models.Requests;
 
 public class UpdateOrderRequestModel

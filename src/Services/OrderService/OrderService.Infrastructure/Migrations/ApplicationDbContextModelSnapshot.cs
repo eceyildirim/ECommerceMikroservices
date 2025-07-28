@@ -847,154 +847,7 @@ namespace OrderService.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductId");
-
                     b.ToTable("OrderItems");
-                });
-
-            modelBuilder.Entity("OrderService.Domain.Entities.Product", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000001"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Laptop Fiyatı: 9925.06 TL.",
-                            IsDeleted = false,
-                            Name = "Laptop",
-                            Price = 9925.06m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000002"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Akıllı Telefon Fiyatı: 14860.37 TL.",
-                            IsDeleted = false,
-                            Name = "Akıllı Telefon",
-                            Price = 14860.37m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000003"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Tablet Fiyatı: 4061.84 TL.",
-                            IsDeleted = false,
-                            Name = "Tablet",
-                            Price = 4061.84m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000004"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Bluetooth Kulaklık Fiyatı: 11921.34 TL.",
-                            IsDeleted = false,
-                            Name = "Bluetooth Kulaklık",
-                            Price = 11921.34m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000005"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Akıllı Saat Fiyatı: 7505.19 TL.",
-                            IsDeleted = false,
-                            Name = "Akıllı Saat",
-                            Price = 7505.19m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000006"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Harici Disk Fiyatı: 3827.2 TL.",
-                            IsDeleted = false,
-                            Name = "Harici Disk",
-                            Price = 3827.2m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000007"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Kamera Fiyatı: 4091.75 TL.",
-                            IsDeleted = false,
-                            Name = "Kamera",
-                            Price = 4091.75m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000008"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Oyun Konsolu Fiyatı: 5943.31 TL.",
-                            IsDeleted = false,
-                            Name = "Oyun Konsolu",
-                            Price = 5943.31m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000009"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: SSD Disk Fiyatı: 8054.15 TL.",
-                            IsDeleted = false,
-                            Name = "SSD Disk",
-                            Price = 8054.15m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000010"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Kablosuz Mouse Fiyatı: 14925.49 TL.",
-                            IsDeleted = false,
-                            Name = "Kablosuz Mouse",
-                            Price = 14925.49m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000011"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Akıllı Saat Fiyatı: 3397.15 TL.",
-                            IsDeleted = false,
-                            Name = "Akıllı Saat",
-                            Price = 3397.15m
-                        },
-                        new
-                        {
-                            Id = new Guid("3027ccfd-d16f-4209-8846-000000000012"),
-                            CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, 0, DateTimeKind.Utc),
-                            Description = "Ürün Bilgisi: Laptop Çantası Fiyatı: 6796.93 TL.",
-                            IsDeleted = false,
-                            Name = "Laptop Çantası",
-                            Price = 6796.93m
-                        });
                 });
 
             modelBuilder.Entity("OrderService.Domain.Entities.Province", b =>
@@ -1204,15 +1057,7 @@ namespace OrderService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OrderService.Domain.Entities.Product", "Product")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Order");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("OrderService.Domain.Entities.Province", b =>
@@ -1241,11 +1086,6 @@ namespace OrderService.Infrastructure.Migrations
             modelBuilder.Entity("OrderService.Domain.Entities.Order", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("OrderService.Domain.Entities.Product", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("OrderService.Domain.Entities.Province", b =>

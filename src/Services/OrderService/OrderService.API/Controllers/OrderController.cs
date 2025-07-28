@@ -57,11 +57,7 @@ public class OrderController : BaseController<OrderController>
     [HttpPost("update-status")]
     public async Task<IActionResult> UpdateStatus([FromBody] UpdateOrderRequestModel requestModel)
     {
-        var updateStatus = await _orderService.UpdateStatusAsync(requestModel);
-
-        if (!updateStatus.IsSuccess)
-            return NotFound(); //güncelle
-
+        await _orderService.UpdateStatusAsync(requestModel);
         return Ok();
     }
 }

@@ -15,7 +15,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<District> Districts { get; set; }
     public DbSet<Neighborhood> Neighborhoods { get; set; }
     public DbSet<Province> Provinces { get; set; }
-    public DbSet<Product> Products { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,10 +63,10 @@ public class ApplicationDbContext : DbContext
             builder.Property(a => a.AddressLine2)
                 .HasMaxLength(500);
 
-            builder.HasOne(a => a.Customer)        
-                .WithMany(c => c.Addresses)        
+            builder.HasOne(a => a.Customer)
+                .WithMany(c => c.Addresses)
                 .HasForeignKey(a => a.CustomerId)
-                .OnDelete(DeleteBehavior.Cascade);           
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(a => a.PostalCode)
                 .HasMaxLength(10);
@@ -109,10 +108,7 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
-            builder.HasOne(oi => oi.Product)
-                .WithMany(p => p.OrderItems)
-                .HasForeignKey(oi => oi.ProductId)
-                .OnDelete(DeleteBehavior.Restrict)
+            builder.Property(oi => oi.ProductId)
                 .IsRequired();
         });
 
@@ -139,11 +135,11 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(o => o.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(c => c.Addresses)     
-                .WithOne(a => a.Customer)          
-                .HasForeignKey(a => a.CustomerId)  
-                .IsRequired()                      
-                .OnDelete(DeleteBehavior.Cascade); 
+            builder.HasMany(c => c.Addresses)
+                .WithOne(a => a.Customer)
+                .HasForeignKey(a => a.CustomerId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Country>(builder =>
@@ -191,20 +187,6 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(p => p.CountryId)
                 .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        modelBuilder.Entity<Product>(builder =>
-        {
-            builder.Property(p => p.Name)
-                .IsRequired()
-                .HasMaxLength(200);
-
-            builder.Property(p => p.Description)
-                .HasMaxLength(1000);
-
-            builder.Property(p => p.Price)
-                .IsRequired()
-                .HasColumnType("decimal(18,2)");
         });
 
         SeedData(modelBuilder);
@@ -817,10 +799,6 @@ public class ApplicationDbContext : DbContext
 
         );
 
-        // Ürün oluştur
-        var productList = SeedProduct();
-        modelBuilder.Entity<Product>().HasData(productList);
-
         // Müşteri Oluştur
         var customerList = SeedCustomer();
         modelBuilder.Entity<Customer>().HasData(customerList);
@@ -853,51 +831,9 @@ public class ApplicationDbContext : DbContext
                 IsDeleted = false,
                 PostalCode = "06690",
                 AddressLine2 = ""
-            }            
+            }
         );
 
-    }
-
-    private List<Product> SeedProduct()
-    {
-        var productNames = new List<string>
-        {
-            "Laptop",
-            "Akıllı Telefon",
-            "Tablet",
-            "Bluetooth Kulaklık",
-            "Akıllı Saat",
-            "Harici Disk",
-            "Kamera",
-            "Oyun Konsolu",
-            "SSD Disk",
-            "Kablosuz Mouse",
-            "Akıllı Saat",
-            "Laptop Çantası"
-        };
-
-        var random = new Random(2025);
-        var products = new List<Product>();
-
-        for (int i = 0; i < productNames.Count; i++)
-        {
-            var product = productNames[i];
-            decimal price = (decimal)(random.Next(100000, 1500001)) / 100m;
-
-            string description = $"Ürün Bilgisi: {product} Fiyatı: {price} TL.";
-
-            products.Add(new Product
-            {
-                Id = Guid.Parse($"3027ccfd-d16f-4209-8846-0000000000{i + 1:D2}"),
-                Name = product,
-                Price = price,
-                Description = description,
-                CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, DateTimeKind.Utc),
-                IsDeleted = false
-            });
-        }
-
-        return products;
     }
 
     private List<Customer> SeedCustomer()

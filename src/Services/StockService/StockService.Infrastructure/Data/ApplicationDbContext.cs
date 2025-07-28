@@ -1,3 +1,4 @@
+using System.Runtime.Intrinsics.Arm.Arm64;
 using Microsoft.EntityFrameworkCore;
 using StockService.Domain.Entities;
 
@@ -62,6 +63,51 @@ public class ApplicationDbContext : DbContext
 
         });
 
+        // Ürün oluştur
+        var productList = SeedProduct();
+        modelBuilder.Entity<Product>().HasData(productList);
+
+    }
+
+    private List<Product> SeedProduct()
+    {
+        var productNames = new List<string>
+        {
+            "Laptop",
+            "Akıllı Telefon",
+            "Tablet",
+            "Bluetooth Kulaklık",
+            "Akıllı Saat",
+            "Harici Disk",
+            "Kamera",
+            "Oyun Konsolu",
+            "SSD Disk",
+            "Kablosuz Mouse",
+            "Akıllı Saat",
+            "Laptop Çantası"
+        };
+
+        var random = new Random(2025);
+        var products = new List<Product>();
+
+        for (int i = 0; i < productNames.Count; i++)
+        {
+            var product = productNames[i];
+            decimal price = (decimal)(random.Next(100000, 1500001)) / 100m;
+
+            string description = $"Ürün Bilgisi: {product} Fiyatı: {price} TL.";
+
+            products.Add(new Product
+            {
+                Id = Guid.Parse($"3027ccfd-d16f-4209-8846-0000000000{i + 1:D2}"),
+                Name = product,
+                BasePrice = price,
+                CreatedAt = new DateTime(2025, 6, 26, 1, 15, 0, DateTimeKind.Utc),
+                IsDeleted = false
+            });
+        }
+
+        return products;
     }
 
 }
