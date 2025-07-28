@@ -6,7 +6,7 @@ namespace StockService.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StockController : BaseController<StockController>
+public class StockController : ControllerBase
 {
     private readonly IStockService _stockService;
 

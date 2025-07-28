@@ -7,7 +7,7 @@ namespace NotificationService.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class NotificationController : BaseController<NotificationController>
+public class NotificationController : ControllerBase
 {
     private readonly ISMSService _smsService;
     private readonly IEmailService _emailService;
