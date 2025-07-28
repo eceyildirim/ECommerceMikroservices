@@ -3,20 +3,166 @@ using NotificationService.Application.Models.Requests;
 using MailKit.Net.Smtp;
 using System.Text;
 using MimeKit;
+using NotificationService.Domain.Contracts;
+using NotificationService.Domain.Entities;
+using NotificationService.Application.Models;
 using Microsoft.Extensions.Configuration;
-
+using NotificationService.Application.Enums;
+using AutoMapper;
 namespace NotificationService.Application.Services;
 
 public class EmailService : IEmailService
 {
     private readonly IConfiguration _configuration;
+    private readonly IMapper _mapper;
+    private readonly IRepository<NotificationLog> _notificationLogRepository;
 
-    public EmailService(IConfiguration configuration)
+    public EmailService(IConfiguration configuration, IRepository<NotificationLog> notificationLogRepository, IMapper mapper)
     {
         _configuration = configuration;
+        _notificationLogRepository = notificationLogRepository;
+        _mapper = mapper;
     }
 
-    public async Task<bool> SendSuccessOrderEmailAsync(OrderSuccessEmailRequestModel requestModel)
+    private async Task SendCancelledOrderMail(OrderEmailRequestModel requestModel)
+    {
+        string template = await File.ReadAllTextAsync("Templates/OrderOperationCancelled.html");
+
+        template = template.Replace("{{CustomerNameSurname}}", requestModel.Order.CustomerNameSurname)
+                    .Replace("{{OrderId}}", requestModel.Order.Id);
+
+        EmailDto emailDto = new EmailDto
+        {
+            To = requestModel.To,
+            Subject = "Sipariş İptali",
+            Body = template
+        };
+
+        NotificationLogDto notificationLogDto = new NotificationLogDto
+        {
+            Id = Guid.NewGuid(),
+            IsDeleted = false,
+            Receiver = emailDto.To,
+            ChannelType = ChannelType.Email,
+            TransactionId = requestModel.Order.Id,
+            TransactionType = TransactionType.Order,
+            LogDate = DateTime.UtcNow,
+            LogType = LogType.Response,
+            JsonValue = Newtonsoft.Json.JsonConvert.SerializeObject(requestModel)
+        };
+
+        await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+        try
+        {
+            await SendEmailAsync(emailDto);
+
+        }
+        catch
+        {
+            notificationLogDto = new NotificationLogDto
+            {
+                Id = Guid.NewGuid(),
+                IsDeleted = false,
+                Receiver = emailDto.To,
+                ChannelType = ChannelType.Email,
+                TransactionId = requestModel.Order.Id,
+                TransactionType = TransactionType.Order,
+                LogDate = DateTime.UtcNow,
+                LogType = LogType.Response,
+                JsonValue = "Mail gönderimi başarısız"
+            };
+            await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+            throw;
+        }
+
+        notificationLogDto = new NotificationLogDto
+        {
+            Id = Guid.NewGuid(),
+            IsDeleted = false,
+            Receiver = emailDto.To,
+            ChannelType = ChannelType.Email,
+            TransactionId = requestModel.Order.Id,
+            TransactionType = TransactionType.Order,
+            LogDate = DateTime.UtcNow,
+            LogType = LogType.Response,
+            JsonValue = "Mail gönderimi başarılı"
+        };
+
+        await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+    }
+
+    private async Task SendOperationCancelledOrderMail(OrderEmailRequestModel requestModel)
+    {
+        string template = await File.ReadAllTextAsync("Templates/OrderOperationCancelled.html");
+
+        template = template.Replace("{{CustomerNameSurname}}", requestModel.Order.CustomerNameSurname)
+                    .Replace("{{OrderId}}", requestModel.Order.Id);
+
+        EmailDto emailDto = new EmailDto
+        {
+            To = requestModel.To,
+            Subject = "Siparişiniz İptali",
+            Body = template
+        };
+
+        NotificationLogDto notificationLogDto = new NotificationLogDto
+        {
+            Id = Guid.NewGuid(),
+            IsDeleted = false,
+            Receiver = emailDto.To,
+            ChannelType = ChannelType.Email,
+            TransactionId = requestModel.Order.Id,
+            TransactionType = TransactionType.Order,
+            LogDate = DateTime.UtcNow,
+            LogType = LogType.Response,
+            JsonValue = Newtonsoft.Json.JsonConvert.SerializeObject(requestModel)
+        };
+
+        await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+        try
+        {
+            await SendEmailAsync(emailDto);
+
+        }
+        catch
+        {
+            notificationLogDto = new NotificationLogDto
+            {
+                Id = Guid.NewGuid(),
+                IsDeleted = false,
+                Receiver = emailDto.To,
+                ChannelType = ChannelType.Email,
+                TransactionId = requestModel.Order.Id,
+                TransactionType = TransactionType.Order,
+                LogDate = DateTime.UtcNow,
+                LogType = LogType.Response,
+                JsonValue = "Mail gönderimi başarısız"
+            };
+            await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+            throw;
+        }
+
+        notificationLogDto = new NotificationLogDto
+        {
+            Id = Guid.NewGuid(),
+            IsDeleted = false,
+            Receiver = emailDto.To,
+            ChannelType = ChannelType.Email,
+            TransactionId = requestModel.Order.Id,
+            TransactionType = TransactionType.Order,
+            LogDate = DateTime.UtcNow,
+            LogType = LogType.Response,
+            JsonValue = "Mail gönderimi başarılı"
+        };
+
+        await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+    }
+
+    private async Task SendSuccessedOrderMail(OrderEmailRequestModel requestModel)
     {
         string template = await File.ReadAllTextAsync("Templates/OrderSuccess.html");
 
@@ -46,12 +192,81 @@ public class EmailService : IEmailService
             Body = template
         };
 
-        var sendEmailResult = await SendEmailAsync(emailDto);
+        NotificationLogDto notificationLogDto = new NotificationLogDto
+        {
+            Id = Guid.NewGuid(),
+            IsDeleted = false,
+            Receiver = emailDto.To,
+            ChannelType = ChannelType.Email,
+            TransactionId = requestModel.Order.Id,
+            TransactionType = TransactionType.Order,
+            LogDate = DateTime.UtcNow,
+            LogType = LogType.Response,
+            JsonValue = Newtonsoft.Json.JsonConvert.SerializeObject(requestModel)
+        };
 
-        return sendEmailResult;
+        await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+        try
+        {
+            await SendEmailAsync(emailDto);
+
+        }
+        catch
+        {
+            notificationLogDto = new NotificationLogDto
+            {
+                Id = Guid.NewGuid(),
+                IsDeleted = false,
+                Receiver = emailDto.To,
+                ChannelType = ChannelType.Email,
+                TransactionId = requestModel.Order.Id,
+                TransactionType = TransactionType.Order,
+                LogDate = DateTime.UtcNow,
+                LogType = LogType.Response,
+                JsonValue = "Mail gönderimi başarısız"
+            };
+            await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+            throw;
+        }
+
+        notificationLogDto = new NotificationLogDto
+        {
+            Id = Guid.NewGuid(),
+            IsDeleted = false,
+            Receiver = emailDto.To,
+            ChannelType = ChannelType.Email,
+            TransactionId = requestModel.Order.Id,
+            TransactionType = TransactionType.Order,
+            LogDate = DateTime.UtcNow,
+            LogType = LogType.Response,
+            JsonValue = "Mail gönderimi başarılı"
+        };
+
+        await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
     }
 
-    public async Task<bool> SendEmailAsync(EmailDto requestModel)
+    public async Task<bool> SendEmailAsync(OrderEmailRequestModel requestModel)
+    {
+
+        switch (requestModel.Order.OrderStatus)
+        {
+            case OrderStatus.OperationalCancelled:
+                SendOperationCancelledOrderMail(requestModel);
+                break;
+            case OrderStatus.Completed:
+                SendSuccessedOrderMail(requestModel);
+                break;
+            case OrderStatus.Cancelled:
+                SendCancelledOrderMail(requestModel);
+                break;
+        }
+
+        return true;
+    }
+
+    public async Task SendEmailAsync(EmailDto requestModel)
     {
         var email = new MimeMessage();
         email.From.Add(MailboxAddress.Parse(_configuration["EmailSettings:From"]));
@@ -66,24 +281,16 @@ public class EmailService : IEmailService
 
         using var smtp = new MailKit.Net.Smtp.SmtpClient();
 
-        try
-        {
-            await smtp.ConnectAsync(_configuration["EmailSettings:SmtpServer"],
-                int.Parse(_configuration["EmailSettings:Port"]),
-                false);
+        await smtp.ConnectAsync(_configuration["EmailSettings:SmtpServer"],
+            int.Parse(_configuration["EmailSettings:Port"]),
+            false);
 
-            await smtp.AuthenticateAsync(_configuration["EmailSettings:Username"],
-                _configuration["EmailSettings:Password"]);
+        await smtp.AuthenticateAsync(_configuration["EmailSettings:Username"],
+            _configuration["EmailSettings:Password"]);
 
-            await smtp.SendAsync(email);
-            await smtp.DisconnectAsync(true);
+        await smtp.SendAsync(email);
+        await smtp.DisconnectAsync(true);
 
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
     }
 
 }

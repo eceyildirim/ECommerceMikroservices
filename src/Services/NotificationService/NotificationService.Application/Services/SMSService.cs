@@ -4,6 +4,12 @@ using Twilio;
 using Microsoft.Extensions.Configuration;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using AutoMapper;
+using NotificationService.Domain.Contracts;
+using NotificationService.Domain.Entities;
+using NotificationService.Application.Enums;
+using NotificationService.Application.Models;
+using NotificationService.Application.Exceptions;
 
 namespace NotificationService.Application.Services;
 
@@ -13,29 +19,105 @@ public class SMSService : ISMSService
     private readonly string _authToken;
     private readonly string _from;
 
-    public SMSService(IConfiguration configuration)
+    private readonly IMapper _mapper;
+    private readonly IRepository<NotificationLog> _notificationLogRepository;
+
+    public SMSService(IConfiguration configuration, IMapper mapper)
     {
         _accountSid = configuration["Twilio:AccountSid"]!;
         _authToken = configuration["Twilio:AuthToken"]!;
         _from = configuration["Twilio:FromPhoneNumber"]!;
-
+        _mapper = mapper;
     }
-
-    public async Task<bool> SendSuccessOrderSMSAsync(OrderSuccessSMSRequestModel requestModel)
+    private async Task SendOrderSMS(OrderSMSRequestModel requestModel, string message)
     {
-        var message = $"Sayın {requestModel.Order.CustomerNameSurname}, siparişiniz başarıyla onaylandı. Teşekkür ederiz.";
-
         SMSDto smsDto = new SMSDto
         {
             Message = message,
             PhoneNumber = requestModel.PhoneNumber
         };
 
-        var result = await SendSMSAsync(smsDto);
+        NotificationLogDto notificationLogDto = new NotificationLogDto
+        {
+            Id = Guid.NewGuid(),
+            IsDeleted = false,
+            Receiver = smsDto.PhoneNumber,
+            ChannelType = ChannelType.Email,
+            TransactionId = requestModel.Order.Id,
+            TransactionType = TransactionType.Order,
+            LogDate = DateTime.UtcNow,
+            LogType = LogType.Request,
+            JsonValue = Newtonsoft.Json.JsonConvert.SerializeObject(requestModel)
+        };
 
-        return result;
+        await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+        try
+        {
+            var result = await SendSMSAsync(smsDto);
+            notificationLogDto = new NotificationLogDto
+            {
+                Id = Guid.NewGuid(),
+                IsDeleted = false,
+                Receiver = smsDto.PhoneNumber,
+                ChannelType = ChannelType.Email,
+                TransactionId = requestModel.Order.Id,
+                TransactionType = TransactionType.Order,
+                LogDate = DateTime.UtcNow,
+                LogType = LogType.Response,
+                JsonValue = Newtonsoft.Json.JsonConvert.SerializeObject(result)
+            };
+
+            await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+            return result.ErrorCode == null;
+
+        }
+        catch (SMSNotificationSendFailedException)
+        {
+            notificationLogDto = new NotificationLogDto
+            {
+                Id = Guid.NewGuid(),
+                IsDeleted = false,
+                Receiver = smsDto.PhoneNumber,
+                ChannelType = ChannelType.Email,
+                TransactionId = requestModel.Order.Id,
+                TransactionType = TransactionType.Order,
+                LogDate = DateTime.UtcNow,
+                LogType = LogType.Response,
+                JsonValue = "SMS Gönderimi Sırasında Hata Oluştu"
+            };
+
+            await _notificationLogRepository.AddAsync(_mapper.Map<NotificationLog>(notificationLogDto));
+
+            return false;
+        }
     }
-    public async Task<bool> SendSMSAsync(SMSDto requestModel)
+
+
+    public async Task<bool> SendSMSAsync(OrderSMSRequestModel requestModel)
+    {
+
+
+        switch (requestModel.Order.OrderStatus)
+        {
+            case OrderStatus.OperationalCancelled:
+                var message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} numaralı siparişiniz operasyonel süreçlerden iptal edilmiştir. Teşekkür ederiz.";
+                await SendOrderSMS(requestModel, message);
+                break;
+            case OrderStatus.Completed:
+                var message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} siparişiniz başarıyla onaylandı. Teşekkür ederiz.";
+                await SendOrderSMS(requestModel, message);
+                break;
+            case OrderStatus.Cancelled:
+                var message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} siparişiniz talebiniz üzerine iptal edilmiştir. Teşekkür ederiz.";
+                await SendOrderSMS(requestModel, message);
+                break;
+        }
+
+        return true;
+    }
+    private async Task<MessageResource> SendSMSAsync(SMSDto requestModel)
     {
         try
         {
@@ -47,13 +129,12 @@ public class SMSService : ISMSService
                 body: requestModel.Message
             );
 
-            // msg.ErrorCode null ise genelde başarılıdır.
-            return msg.ErrorCode == null;
+            return msg;
         }
         catch (Exception)
         {
             // TODO: logla
-            return false;
+            throw new SMSNotificationSendFailedException();
         }
     }
 

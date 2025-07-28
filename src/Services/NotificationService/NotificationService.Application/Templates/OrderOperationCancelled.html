@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Siparişiniz İptal Edildi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #c0392b;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">Siparişiniz İptal Edildi</div>
+
+        <p>Sayın <strong>{{CustomerNameSurname}}</strong>,</p>
+
+        <p>Vermiş olduğunuz <strong>{{OrderId}}</strong> numaralı siparişiniz, stok durumları nedeniyle <strong>iptal
+                edilmiştir</strong>.</p>
+
+        <p>Dilerseniz farklı ürünleri inceleyebilir ya da benzer ürünleri tekrar sipariş edebilirsiniz.</p>
+
+        <p class="footer">
+            Bu e-posta otomatik olarak gönderilmiştir. Lütfen yanıtlamayınız.<br>
+            © {{Year}} ECommerceMicroservices | Müşteri Hizmetleri
+        </p>
+    </div>
+</body>
+
+</html>

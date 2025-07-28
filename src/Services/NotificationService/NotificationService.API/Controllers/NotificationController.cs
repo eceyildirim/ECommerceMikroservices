@@ -18,20 +18,15 @@ public class NotificationController : BaseController<NotificationController>
     }
 
     [HttpPost, Route("send-email")]
-    public async Task<IActionResult> SendEmail([FromBody] OrderSuccessEmailRequestModel emailRequestModel)
+    public async Task<IActionResult> SendEmail([FromBody] OrderEmailRequestModel emailRequestModel)
     {
-        var response = await _emailService.SendSuccessOrderEmailAsync(emailRequestModel);
-
-        return Ok();
-
+        return Ok(await _emailService.SendEmailAsync(emailRequestModel));
     }
 
     [HttpPost, Route("send-sms")]
-    public async Task<IActionResult> SendSMS([FromBody] OrderSuccessSMSRequestModel smsRequestModel)
+    public async Task<IActionResult> SendSMS([FromBody] OrderMSRequestModel smsRequestModel)
     {
-        var response = await _smsService.SendSuccessOrderSMSAsync(smsRequestModel);
-
-        return Ok();
+        return Ok(await _smsService.SendEmailAsync(smsRequestModel));
     }
 
 }

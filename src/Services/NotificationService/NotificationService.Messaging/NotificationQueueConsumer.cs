@@ -44,15 +44,23 @@ public class NotificationQueueConsumer : IDisposable
             Console.WriteLine($"Received message: {message}");
 
             // Burada mesajı deserialize edip işleyebilirsin
-            var stockUpdate = JsonSerializer.Deserialize<StockUpdateMessage>(message);
+            var notificationMessage = JsonSerializer.Deserialize<NotificationMessage>(message);
 
             // Örnek: Mesajı işleme simülasyonu
-            if (stockUpdate != null)
+            if (notificationMessage != null)
             {
-                Console.WriteLine($"OrderId: {stockUpdate.OrderId}, Items count: {stockUpdate.Items.Count}");
+                Console.WriteLine($"OrderId: {notificationMessage.Order.Id}, Items count: {notificationMessage.Order.Items.Count}");
 
-                var response = await _httpClient.PutAsJsonAsync("api/stock/update-stock", stockUpdate);
+                if (notificationMessage.ChannelType.Email)
+                {
+                    var response = await _httpClient.PutAsJsonAsync("api/notification/send-email", stockUpdate);
+                }
 
+                if (notificationMessage.ChannelType.SMS)
+                {
+                    var response = await _httpClient.PutAsJsonAsync("api/notification/send-sms", stockUpdate);
+
+                }
             }
 
             // Mesaj işlendi olarak işaretle (ack)

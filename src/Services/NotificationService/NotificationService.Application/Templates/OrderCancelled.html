@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Siparişiniz İptal Edildi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .header {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #d35400;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 13px;
+      color: #999;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #2980b9;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .btn:hover {
+      background-color: #1c5980;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">Siparişiniz İptal Edildi</div>
+
+    <p>Sayın <strong>{{FullName}}</strong>,</p>
+
+    <p>{{OrderId}} numaralı siparişiniz, talebiniz doğrultusunda başarıyla iptal edilmiştir.</p>
+
+    <p>Ödemeniz varsa iade süreci en kısa sürede başlatılacaktır. İade durumu ve diğer detaylar için hesabınızı kontrol
+      edebilirsiniz.</p>
+
+    <p class="footer">
+      Herhangi bir sorunuz varsa bizimle <a href="mailto:destek@example.com">iletişime geçebilirsiniz</a>.<br>
+      © {{Year}} ECommerceMicroservices | Müşteri Hizmetleri
+    </p>
+  </div>
+</body>
+
+</html>
