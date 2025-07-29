@@ -76,6 +76,11 @@ public class OrderService : IOrderService
 
         var orderDto = _mapper.Map<OrderDto>(order);
 
+        foreach (var item in orderDto.Items)
+        {
+            item.ProductName = orderRequestModel?.Items?.Where(x => x.ProductId == item.ProductId)?.FirstOrDefault()?.ProductName ?? "";
+        }
+
         //Sipariş oluşturulduktan sonra stok düşürmek için queue'ya data gönderilir.
         var stockUpdateMessage = new StockUpdateMessage
         {
@@ -83,6 +88,7 @@ public class OrderService : IOrderService
             Items = orderDto.Items.Select(i => new OrderItemDto
             {
                 ProductId = i.ProductId,
+                ProductName = i.ProductName,
                 Quantity = i.Quantity
             }).ToList()
         };

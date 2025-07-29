@@ -31,7 +31,7 @@ public class OrderRequestModelValidator : AbstractValidator<OrderRequestModel>
             .Must((model, totalAmount) =>
             {
                 var calculatedAmount = model.Items.Sum(item => item.Quantity * item.UnitPrice);
-                return totalAmount == calculatedAmount;
+                return Math.Abs(totalAmount - calculatedAmount) < 0.01m;
             })
             .WithMessage("Toplam tutar, ürünlerin toplam tutarıyla eşleşmiyor.");
     }

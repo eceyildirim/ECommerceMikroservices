@@ -1,4 +1,4 @@
-namespace StockService.Messaging;
+namespace StockService.WorkerService.Enums;
 
 public enum OrderStatus
 {

@@ -18,9 +18,15 @@ public class RabbitMQPublisherService : IRabbitMQPublisherService
         _appSettingsModel = appSettingsModel.Value;
     }
 
-    private async Task PublishMessage<T>(T message, string queueName, string exchangeName, string routingKey)
+    private async Task PublishMessage<T>(T message, string queueName, string routingKey)
     {
-        var factory = new ConnectionFactory() { HostName = _appSettingsModel.QueueConfiguration.HostName };
+        var factory = new ConnectionFactory()
+        {
+            HostName = _appSettingsModel.QueueConfiguration.HostName,
+            Port = _appSettingsModel.QueueConfiguration.Port,
+            UserName = _appSettingsModel.QueueConfiguration.UserName,
+            Password = _appSettingsModel.QueueConfiguration.Password
+        };
 
         IConnection? _connection = await factory.CreateConnectionAsync();
         IChannel _channel = await _connection.CreateChannelAsync();
@@ -28,10 +34,10 @@ public class RabbitMQPublisherService : IRabbitMQPublisherService
         if (_channel == null)
             throw new RabbitMQException("RabbitMQ channel is not created. Call ConnectAsync first.");
 
-        await _channel.ExchangeDeclareAsync(exchangeName, ExchangeType.Direct);
+        await _channel.ExchangeDeclareAsync(_appSettingsModel.QueueConfiguration.ExchangeName, ExchangeType.Direct);
 
         await _channel.QueueDeclareAsync(queueName, true, false, false, null);
-        await _channel.QueueBindAsync(queueName, exchangeName, routingKey);
+        await _channel.QueueBindAsync(queueName, _appSettingsModel.QueueConfiguration.ExchangeName, routingKey);
 
         var properties = new BasicProperties();
         properties.Persistent = true; //Mesaj kalıcı olsun diye.
@@ -39,16 +45,16 @@ public class RabbitMQPublisherService : IRabbitMQPublisherService
         string jsonString = JsonConvert.SerializeObject(message);
         byte[] body = Encoding.UTF8.GetBytes(jsonString);
 
-        await _channel.BasicPublishAsync(exchangeName, routingKey, true, properties, body);
+        await _channel.BasicPublishAsync(_appSettingsModel.QueueConfiguration.ExchangeName, routingKey, true, properties, body);
     }
 
     public async Task PublishStockUpdateAsync(StockUpdateMessage message)
     {
-        await PublishMessage<StockUpdateMessage>(message, _appSettingsModel.QueueConfiguration.StockQueueName, _appSettingsModel.QueueConfiguration.ExchangeName, _appSettingsModel.QueueConfiguration.StockRoutingKey);
+        await PublishMessage<StockUpdateMessage>(message, _appSettingsModel.QueueConfiguration.StockQueueName, _appSettingsModel.QueueConfiguration.StockRoutingKey);
     }
 
     public async Task PublishNotificaitionRequestAsync(NotificationMessage message)
     {
-        await PublishMessage<NotificationMessage>(message, _appSettingsModel.QueueConfiguration.NotificationQueueName, _appSettingsModel.QueueConfiguration.ExchangeName, _appSettingsModel.QueueConfiguration.NotificationRoutingKey);
+        await PublishMessage<NotificationMessage>(message, _appSettingsModel.QueueConfiguration.NotificationQueueName, _appSettingsModel.QueueConfiguration.NotificationRoutingKey);
     }
 }

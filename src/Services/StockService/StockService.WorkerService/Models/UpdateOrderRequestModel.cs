@@ -1,4 +1,5 @@
-namespace StockService.Messaging;
+using StockService.WorkerService.Enums;
+namespace StockService.WorkerService.Models;
 
 public class UpdateOrderRequestModel
 {
