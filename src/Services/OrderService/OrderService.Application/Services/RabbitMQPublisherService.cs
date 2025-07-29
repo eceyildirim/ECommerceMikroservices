@@ -1,10 +1,11 @@
 using System.Text;
-using System.Text.Json;
 using OrderService.Application.Contracts;
 using OrderService.Application.Models;
 using OrderService.Common;
 using RabbitMQ.Client;
+using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
+using OrderService.Common.Exceptions;
 
 namespace OrderService.Application.Services;
 
@@ -17,89 +18,37 @@ public class RabbitMQPublisherService : IRabbitMQPublisherService
         _appSettingsModel = appSettingsModel.Value;
     }
 
-    public async Task PublishStockUpdateAsync(StockUpdateMessage message)
+    private async Task PublishMessage<T>(T message, string queueName, string exchangeName, string routingKey)
     {
-        IConnection? _stockConnection;
-        IChannel _stockChannel;
+        var factory = new ConnectionFactory() { HostName = _appSettingsModel.QueueConfiguration.HostName };
 
-        var stockFactory = new ConnectionFactory()
-        {
-            HostName = _appSettingsModel.StockQueueConfiguration.HostName,
-            UserName = _appSettingsModel.StockQueueConfiguration.UserName,
-            Password = _appSettingsModel.StockQueueConfiguration.Password,
-            ClientProvidedName = _appSettingsModel.StockQueueConfiguration.ClientProvidedName
-        };
-        _stockConnection = await stockFactory.CreateConnectionAsync();
-        _stockChannel = await _stockConnection.CreateChannelAsync();
+        IConnection? _connection = await factory.CreateConnectionAsync();
+        IChannel _channel = await _connection.CreateChannelAsync();
 
-        await _stockChannel.QueueDeclareAsync(
-            queue: _appSettingsModel.StockQueueConfiguration.QueueName,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null
-        );
+        if (_channel == null)
+            throw new RabbitMQException("RabbitMQ channel is not created. Call ConnectAsync first.");
 
-        if (_stockChannel == null)
-            throw new InvalidOperationException("RabbitMQ channel is not created. Call ConnectAsync first.");
+        await _channel.ExchangeDeclareAsync(exchangeName, ExchangeType.Direct);
 
-        var json = JsonSerializer.Serialize(message);
-        var body = Encoding.UTF8.GetBytes(json);
+        await _channel.QueueDeclareAsync(queueName, true, false, false, null);
+        await _channel.QueueBindAsync(queueName, exchangeName, routingKey);
 
         var properties = new BasicProperties();
         properties.Persistent = true; //Mesaj kalıcı olsun diye.
 
-        //Exchange boş bırakılırsa default exchange'e gider.
-        await _stockChannel.BasicPublishAsync(
-            "",
-            routingKey: _appSettingsModel.StockQueueConfiguration.QueueName,
-            mandatory: false,
-            properties,
-            body: body
-        );
+        string jsonString = JsonConvert.SerializeObject(message);
+        byte[] body = Encoding.UTF8.GetBytes(jsonString);
 
+        await _channel.BasicPublishAsync(exchangeName, routingKey, true, properties, body);
+    }
 
+    public async Task PublishStockUpdateAsync(StockUpdateMessage message)
+    {
+        await PublishMessage<StockUpdateMessage>(message, _appSettingsModel.QueueConfiguration.StockQueueName, _appSettingsModel.QueueConfiguration.ExchangeName, _appSettingsModel.QueueConfiguration.StockRoutingKey);
     }
 
     public async Task PublishNotificaitionRequestAsync(NotificationMessage message)
     {
-        IConnection? _notificationConnection;
-        IChannel _notificationChannel;
-
-        var notificationFactory = new ConnectionFactory()
-        {
-            HostName = _appSettingsModel.NotificationQueueConfiguration.HostName,
-            UserName = _appSettingsModel.NotificationQueueConfiguration.UserName,
-            Password = _appSettingsModel.NotificationQueueConfiguration.Password,
-            ClientProvidedName = _appSettingsModel.NotificationQueueConfiguration.ClientProvidedName
-        };
-        _notificationConnection = await notificationFactory.CreateConnectionAsync();
-        _notificationChannel = await _notificationConnection.CreateChannelAsync();
-
-        await _notificationChannel.QueueDeclareAsync(
-            queue: _appSettingsModel.NotificationQueueConfiguration.QueueName,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null
-        );
-
-        if (_notificationChannel == null)
-            throw new InvalidOperationException("RabbitMQ channel is not created. Call ConnectAsync first.");
-
-        var json = JsonSerializer.Serialize(message);
-        var body = Encoding.UTF8.GetBytes(json);
-
-        var properties = new BasicProperties();
-        properties.Persistent = true; //Mesaj kalıcı olsun diye.
-
-        //Exchange boş bırakılırsa default exchange'e gider.
-        await _notificationChannel.BasicPublishAsync(
-            "",
-            routingKey: _appSettingsModel.NotificationQueueConfiguration.QueueName,
-            mandatory: false,
-            properties,
-            body: body
-        );
+        await PublishMessage<NotificationMessage>(message, _appSettingsModel.QueueConfiguration.NotificationQueueName, _appSettingsModel.QueueConfiguration.ExchangeName, _appSettingsModel.QueueConfiguration.NotificationRoutingKey);
     }
 }

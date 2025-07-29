@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using OrderService.Application.Contracts;
 using OrderService.Infrastructure.Data;
+using OrderService.Common.Exceptions;
 
 namespace OrderService.Infrastructure.Repositories;
 
@@ -12,18 +13,26 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(ApplicationDbContext context)
     {
         _context = context;
-    }        
+    }
 
     public async Task<int> SaveChangesAsync(CancellationToken ct = default)
-        => await _context.SaveChangesAsync(ct);
-
+    {
+        try
+        {
+            return await _context.SaveChangesAsync(ct);
+        }
+        catch (Exception exp)
+        {
+            throw new DBOperationException(exp?.Message, exp);
+        }
+    }
     public async Task BeginTransactionAsync(CancellationToken ct = default)
     {
         if (_transaction != null)
-            return ;
+            return;
 
         _transaction = await _context.Database.BeginTransactionAsync(ct);
-        
+
     }
 
     public async Task CommitTransactionAsync(CancellationToken ct = default)
@@ -36,10 +45,10 @@ public class UnitOfWork : IUnitOfWork
             await _context.SaveChangesAsync(ct);
             await _transaction.CommitAsync(ct);
         }
-        catch
+        catch (Exception exp)
         {
             await RollbackTransactionAsync(ct);
-            throw;
+            throw new DBOperationException(exp?.Message, exp);
         }
         finally
         {
@@ -60,7 +69,7 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task ExecuteInTransactionAsync(Func<Task> action, CancellationToken ct = default)
     {
-        await BeginTransactionAsync(ct); 
+        await BeginTransactionAsync(ct);
         try
         {
             await action();
@@ -75,7 +84,7 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> action, CancellationToken ct = default)
     {
-        await BeginTransactionAsync(ct); 
+        await BeginTransactionAsync(ct);
         try
         {
             var result = await action();
@@ -98,5 +107,5 @@ public class UnitOfWork : IUnitOfWork
         }
 
         await _context.DisposeAsync();
-    }    
+    }
 }

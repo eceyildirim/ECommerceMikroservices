@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OrderService.Domain\OrderService.Domain.csproj" />
     <ProjectReference Include="..\OrderService.Application\OrderService.Application.csproj" />
+    <ProjectReference Include="..\OrderService.Common\OrderService.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

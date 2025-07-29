@@ -7,6 +7,9 @@ using OrderService.Domain.Contracts;
 using OrderService.Infrastructure.Data;
 using OrderService.Infrastructure.Repositories;
 using OrderService.Common;
+using System.Reflection;
+using OrderService.Application.Services;
+using OrderService.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,7 @@ builder.Services.AddScoped<IOrderService, OrderService.Application.Services.Orde
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IRabbitMQPublisherService, RabbitMQPublisherService>();
 
 builder.Services.Configure<AppSettingsModel>(builder.Configuration);
 
@@ -27,7 +31,16 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.UseCustomValidationResponse();
+
 builder.Services.AddFluentValidationAutoValidation();
+
+builder.Services.AddControllers()
+    .AddFluentValidation(fv =>
+    {
+        fv.RegisterValidatorsFromAssembly(Assembly.Load("OrderService.Application"));
+        fv.AutomaticValidationEnabled = true;
+    });
 
 var app = builder.Build();
 
@@ -42,6 +55,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseMiddleware<CustomExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.MapControllers();

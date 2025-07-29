@@ -2,24 +2,15 @@ namespace OrderService.Common;
 
 public class AppSettingsModel
 {
-    public StockQueueConfiguration StockQueueConfiguration { get; set; }
-    public NotificationQueueConfiguration NotificationQueueConfiguration { get; set; }
+    public QueueConfiguration QueueConfiguration { get; set; }
 }
 
-public class StockQueueConfiguration
+public class QueueConfiguration
 {
-    public string HostName { get; set; } = string.Empty;
-    public string UserName { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string ClientProvidedName { get; set; } = string.Empty;
-    public string QueueName { get; set; } = string.Empty;
-}
-
-public class NotificationQueueConfiguration
-{
-    public string HostName { get; set; } = string.Empty;
-    public string UserName { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string ClientProvidedName { get; set; } = string.Empty;
-    public string QueueName { get; set; } = string.Empty;
+    public string ExchangeName { get; set; }
+    public string HostName { get; set; }
+    public string StockQueueName { get; set; }
+    public string NotificationQueueName { get; set; }
+    public string StockRoutingKey { get; set; }
+    public string NotificationRoutingKey { get; set; }
 }
