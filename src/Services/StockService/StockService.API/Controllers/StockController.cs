@@ -18,11 +18,7 @@ public class StockController : ControllerBase
     [HttpPut, Route("update-stock")]
     public async Task<IActionResult> UpdateStock([FromBody] UpdateStockRequestModel requestModel)
     {
-        var result = await _stockService.UpdateStockAsync(requestModel);
-
-        if (!result.Successed)
-            return NotFound();
-
+        await _stockService.UpdateStockAsync(requestModel);
         return NoContent();
     }
 

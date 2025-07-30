@@ -5,6 +5,7 @@ using StockService.Application.Contracts;
 using StockService.Application.Models.Responses;
 using StockService.Application.Models.Requests;
 using StockService.Domain.Contracts;
+using StockService.Common.Exceptions;
 using StockService.Domain.Entities;
 using StockService.Domain.Enums;
 using StockService.Application.Enums;
@@ -25,7 +26,7 @@ public class StockService : IStockService
         _stockTransactionRepository = stockTransactionRepository;
     }
 
-    public async Task<ServiceResponse> UpdateStockAsync(UpdateStockRequestModel requestModel)
+    public async Task UpdateStockAsync(UpdateStockRequestModel requestModel)
     {
         await _unitOfWork.BeginTransactionAsync();
 
@@ -37,20 +38,10 @@ public class StockService : IStockService
                 var stockItem = await _stockRepository.GetStockByProductId(item.ProductId);
 
                 if (stockItem == null)
-                    return new ServiceResponse
-                    {
-                        Successed = false,
-                        Code = (short)ServiceErrorCodes.NotFound,
-                        Message = $"Product with Id {item.ProductId} not found in stock."
-                    };
+                    throw new StockNotfoundException($"Product with Id {item.ProductId} not found in stock");
 
                 if (stockItem.QuantityAvailable < item.Quantity)
-                    return new ServiceResponse
-                    {
-                        Successed = false,
-                        Code = (short)ServiceErrorCodes.BadRequest,
-                        Message = $"stock quantity error for product {item.ProductId}. Available: {stockItem.QuantityAvailable}, Requested: {item.Quantity}"
-                    };
+                    throw new StockException($"Stock quantity error for product {item.ProductId}. Available: {stockItem.QuantityAvailable}, Requested: {item.Quantity}");
 
                 stockItem.QuantityAvailable -= item.Quantity;
 
@@ -71,24 +62,12 @@ public class StockService : IStockService
 
             await _unitOfWork.SaveChangesAsync();
             await _unitOfWork.CommitTransactionAsync();
-
-            return new ServiceResponse
-            {
-                Successed = true,
-                Code = (short)ServiceErrorCodes.Ok,
-                Message = $"Update stock for product {requestModel.OrderId}"
-            };
         }
         catch
         {
             await _unitOfWork.RollbackTransactionAsync();
 
-            return new ServiceResponse
-            {
-                Successed = false,
-                Code = (short)ServiceErrorCodes.Status500InternalServerError,
-                Message = $"Update stock service error"
-            };
+            throw new StockException("Update stock service Erro");
         }
 
     }

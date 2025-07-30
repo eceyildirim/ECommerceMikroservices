@@ -3,6 +3,7 @@ using StockService.Application.AutoMapper;
 using StockService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using StockService.Application.Services;
+using StockService.API.Middleware;
 using StockService.Application.Contracts;
 using StockService.Domain.Contracts;
 using StockService.Infrastructure.Repositories;
@@ -25,6 +26,8 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.UseCustomValidationResponse();
+
 builder.Services.AddFluentValidationAutoValidation();
 
 
@@ -40,6 +43,9 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });
 }
+
+app.UseMiddleware<CustomExceptionMiddleware>();
+
 
 app.UseHttpsRedirection();
 app.MapControllers();

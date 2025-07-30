@@ -14,12 +14,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\StockService.Application\StockService.Application.csproj" />
     <ProjectReference Include="..\StockService.Infrastructure\StockService.Infrastructure.csproj" />
+    <ProjectReference Include="..\StockService.Common\StockService.Common.csproj" />
   </ItemGroup>
 
 </Project>

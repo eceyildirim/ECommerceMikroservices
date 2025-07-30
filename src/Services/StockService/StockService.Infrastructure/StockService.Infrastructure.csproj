@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\StockService.Application\StockService.Application.csproj" />
     <ProjectReference Include="..\StockService.Domain\StockService.Domain.csproj" />
+    <ProjectReference Include="..\StockService.Common\StockService.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

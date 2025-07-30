@@ -4,6 +4,6 @@ namespace StockService.Application.Contracts;
 
 public interface IStockService
 {
-    Task<ServiceResponse> UpdateStockAsync(UpdateStockRequestModel requestModel);
+    Task UpdateStockAsync(UpdateStockRequestModel requestModel);
 
 }

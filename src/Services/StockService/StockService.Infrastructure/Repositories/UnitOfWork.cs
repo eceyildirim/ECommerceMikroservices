@@ -1,6 +1,7 @@
 using StockService.Application.Contracts;
 using StockService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore.Storage;
+using StockService.Common.Exceptions;
 namespace StockService.Infrastructure.Repositories;
 
 public class UnitOfWork : IUnitOfWork
@@ -14,7 +15,16 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken ct = default)
-        => await _context.SaveChangesAsync(ct);
+    {
+        try
+        {
+            return await _context.SaveChangesAsync(ct);
+        }
+        catch (Exception exp)
+        {
+            throw new DBOperationException(exp?.Message, exp);
+        }
+    }
 
     public async Task BeginTransactionAsync(CancellationToken ct = default)
     {
@@ -35,10 +45,10 @@ public class UnitOfWork : IUnitOfWork
             await _context.SaveChangesAsync(ct);
             await _transaction.CommitAsync(ct);
         }
-        catch
+        catch (Exception exp)
         {
             await RollbackTransactionAsync(ct);
-            throw;
+            throw new DBOperationException(exp?.Message, exp);
         }
         finally
         {

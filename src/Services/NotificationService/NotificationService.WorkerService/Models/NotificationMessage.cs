@@ -1,4 +1,5 @@
-namespace NotificationService.Messaging;
+
+namespace NotificationService.WorkerService.Models;
 
 public class NotificationMessage
 {
@@ -32,6 +33,7 @@ public class Customer
 
 public class Order
 {
+    public Guid Id { get; set; }
     public DateTime OrderDate { get; set; }
     public decimal TotalAmount { get; set; }
     public OrderStatus Status { get; set; }
@@ -41,6 +43,7 @@ public class Order
 
 public class OrderItem
 {
+    public Guid Id { get; set; }
     public Guid ProductId { get; set; }
     public string ProductName { get; set; }
     public int Quantity { get; set; }
