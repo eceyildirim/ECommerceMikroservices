@@ -1,4 +1,4 @@
-# Beymen Assessment
+#Case Study
 Bu proje **.Net Core** ve **PostgreSQL** ile **OrderService**, **StockService** ve **NotificationService** mikroservislerinin **RabbitMQ Event Driven Communication** üzerinden haberleştiği bir yapı ile hazırlanmıştır. 
 Dağıtık bir sistemde mesajlaşma ve veri yönetimi konularındaki çalışmaları kapsamaktadır.
 
