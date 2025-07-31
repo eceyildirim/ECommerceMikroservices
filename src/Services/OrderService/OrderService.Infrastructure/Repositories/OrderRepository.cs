@@ -16,6 +16,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
     {
         return await _context.Set<Order>()
             .Include(o => o.Items)
+            .Include(o => o.Customer)
             .FirstOrDefaultAsync(o => o.Id == id);
     }
 
@@ -66,7 +67,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
         {
             existingOrder.Items.Add(newItem);
         }
-        
+
         await _context.SaveChangesAsync();
     }
 
