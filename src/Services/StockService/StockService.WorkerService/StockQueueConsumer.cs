@@ -72,9 +72,16 @@ public class StockQueueConsumer : BackgroundService
 
                             _httpClient.BaseAddress = new Uri(_appSettings.OrderServiceAPIUrl);
                             var updateOrderResponse = await _httpClient.PutAsJsonAsync("api/order/update-status", updateOrderRequestModel);
-
-                            // Buraya başarısız notification gönderme işlemi eklenebilir
                         }
+
+                        var updateOrderRequestModel = new UpdateOrderRequestModel
+                        {
+                            OrderId = stockUpdate.OrderId,
+                            OrderStatus = OrderStatus.Completed
+                        };
+
+                        _httpClient.BaseAddress = new Uri(_appSettings.OrderServiceAPIUrl);
+                        var updateOrderResponse = await _httpClient.PutAsJsonAsync("api/order/update-status", updateOrderRequestModel);
                     }
 
                     // Başarılı işlendiyse RabbitMQ'ya ack gönder
