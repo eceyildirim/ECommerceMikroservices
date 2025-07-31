@@ -110,6 +110,9 @@ public class ApplicationDbContext : DbContext
 
             builder.Property(oi => oi.ProductId)
                 .IsRequired();
+
+            builder.Property(oi => oi.ProductName)
+                .IsRequired();
         });
 
         modelBuilder.Entity<Customer>(builder =>

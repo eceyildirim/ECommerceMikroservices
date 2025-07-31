@@ -64,7 +64,8 @@ public class OrderService : IOrderService
                 OrderId = order.Id,
                 ProductId = item.ProductId,
                 Quantity = item.Quantity,
-                UnitPrice = item.UnitPrice
+                UnitPrice = item.UnitPrice,
+                ProductName = item.ProductName
             });
         }
 
@@ -150,6 +151,8 @@ public class OrderService : IOrderService
         };
 
         await _rabbitMQPublisherService.PublishNotificaitionRequestAsync(notificationMessage);
+
+        _unitOfWork.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteOrderAsync(Guid id)
