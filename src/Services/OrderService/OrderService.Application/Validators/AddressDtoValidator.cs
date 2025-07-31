@@ -11,8 +11,6 @@ public class AddressDtoValidator : AbstractValidator<AddressDto>
             .NotEmpty().WithMessage("Adres satırı boş olamaz.")
             .MaximumLength(200).WithMessage("Adres 200 karakteri geçemez.");
 
-        // AddressLine2 genellikle opsiyoneldir — validasyon koymaya gerek yok.
-
         RuleFor(x => x.PostalCode)
             .NotEmpty().WithMessage("Posta kodu boş olamaz.")
             .Matches(@"^\d{5}$").WithMessage("Posta kodu 5 haneli olmalıdır.");

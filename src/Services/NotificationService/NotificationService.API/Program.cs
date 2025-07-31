@@ -1,5 +1,3 @@
-using System.Reflection;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using NotificationService.Application.AutoMapper;
@@ -10,8 +8,6 @@ using NotificationService.Domain.Contracts;
 using NotificationService.Application.Contracts;
 using NotificationService.Application.Services;
 using NotificationService.Common.Models;
-using NotificationService.Infrastructure.Repositories;
-using NotificationService.Domain.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -135,7 +135,7 @@ public class SMSService : ISMSService
         }
         catch (Exception exp)
         {
-            // TODO: logla
+            // TODO: log yönetimi
             throw new SMSNotificationSendFailedException(exp.Message);
         }
     }
