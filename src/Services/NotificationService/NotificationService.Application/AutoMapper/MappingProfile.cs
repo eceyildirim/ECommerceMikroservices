@@ -1,6 +1,6 @@
 using AutoMapper;
 using NotificationService.Domain.Entities;
-using NotificationService.Application.Models;
+using NotificationService.Common.Models;
 
 namespace NotificationService.Application.AutoMapper;
 

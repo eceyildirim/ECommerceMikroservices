@@ -1,5 +1,5 @@
 using System.Text;
-using NotificationService.Application.Enums;
+using NotificationService.Common.Enums;
 using NotificationService.API.Helpers;
 using Newtonsoft.Json;
 
