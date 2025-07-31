@@ -36,7 +36,7 @@ public class ApplicationDbContext : DbContext
 
             // Relationship: Stock -> Product (many-to-one)
             entity.HasOne(s => s.Product)
-                .WithMany()  // Product tarafında collection yok
+                .WithMany()
                 .HasForeignKey(s => s.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
@@ -62,6 +62,34 @@ public class ApplicationDbContext : DbContext
         var productList = SeedProduct();
         modelBuilder.Entity<Product>().HasData(productList);
 
+        //Stok olutşur.
+        var stockList = SeedStock(productList);
+
+    }
+
+    public Guid ProductId { get; set; }
+    public int QuantityAvailable { get; set; }
+    public Product Product { get; set; }
+    public ICollection<StockTransaction> Transactions { get; set; } = new List<StockTransaction>();
+
+    private List<Stock> SeedStock(List<Product> products)
+    {
+        List<Stock> stockList = new List<Stock>();
+        Random random = new Random();
+
+        for (int i = 0; i < products.Count; i++)
+        {
+            var product = products[i];
+
+            stockList.Add(new Stock
+            {
+                ProductId = product.Id,
+                Id = Guid.Parse($"3027ccfd-d16f-4209-8846-0000000000{i + 1:D2}"),
+                QuantityAvailable = random.Next(10, 101)
+            });
+        }
+
+        return stockList;
     }
 
     private List<Product> SeedProduct()
