@@ -1,25 +1,40 @@
+using NotificationService.Common.Models;
 using NotificationService.WorkerService.Models;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client.Events;
 using System.Text;
 using RabbitMQ.Client;
-using NotificationService.WorkerService.Models;
 using Newtonsoft.Json;
+using NotificationService.Common.Enums;
 using System.Net.Http.Json;
+using NotificationService.Common.Models.Requests;
+using Polly;
+using Polly.Retry;
+using System.Net.Http;
+using NotificationService.WorkerService.Models;
 namespace NotificationService.WorkerService;
 
 public class NotificationQueueConsumer : BackgroundService
 {
     private readonly ILogger<NotificationQueueConsumer> _logger;
-    private readonly AppSettings _appSettings;
+    private readonly NotificationService.WorkerService.Models.AppSettings _appSettings;
     private readonly HttpClient _httpClient;
+    private readonly IAsyncPolicy<HttpResponseMessage> _retryPolicy;
 
-    public NotificationQueueConsumer(ILogger<NotificationQueueConsumer> logger, IOptions<AppSettings> options, IHttpClientFactory httpClientFactory)
+    public NotificationQueueConsumer(ILogger<NotificationQueueConsumer> logger, IOptions<NotificationService.WorkerService.Models.AppSettings> options, IHttpClientFactory httpClientFactory)
     {
         _httpClient = httpClientFactory.CreateClient();
         _logger = logger;
         _appSettings = options.Value;
+
+        _retryPolicy = Policy
+            .Handle<HttpRequestException>()
+            .OrResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                onRetry: (outcome, timespan, retryAttempt, context) =>
+                {
+                    _logger.LogWarning($"Retry {retryAttempt} after {timespan.TotalSeconds} seconds due to {outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString()}");
+                });
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -62,14 +77,32 @@ public class NotificationQueueConsumer : BackgroundService
 
                     if (notificationMessage.ChannelTypes.Contains(ChannelType.Email))
                     {
+                        var messageRequest = new OrderEmailRequestModel
+                        {
+                            Order = notificationMessage.Order
+                        };
+
                         _httpClient.BaseAddress = new Uri(_appSettings.NotificationServiceAPIUrl);
-                        var response = await _httpClient.PutAsJsonAsync("api/notification/send-email", message);
+
+                        var result = await _retryPolicy.ExecuteAsync(() =>
+                            _httpClient.PutAsJsonAsync("api/notification/send-email", messageRequest));
+
+                        result.EnsureSuccessStatusCode();
                     }
 
                     if (notificationMessage.ChannelTypes.Contains(ChannelType.SMS))
                     {
+                        var smsMessageRequest = new OrderSMSRequestModel
+                        {
+                            Order = notificationMessage.Order
+                        };
+
                         _httpClient.BaseAddress = new Uri(_appSettings.NotificationServiceAPIUrl);
-                        var response = await _httpClient.PutAsJsonAsync("api/notification/send-sms", message);
+                        var smsResult = await _retryPolicy.ExecuteAsync(() =>
+                            _httpClient.PutAsJsonAsync("api/notification/send-sms", smsMessageRequest));
+
+                        smsResult.EnsureSuccessStatusCode();
+
                     }
                 }
 
