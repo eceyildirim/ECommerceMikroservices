@@ -2,12 +2,12 @@ using System.Runtime.ExceptionServices;
 using System.Net;
 using System.Text;
 using System.Runtime.Serialization.Json;
-using NotificationService.Application.Models.Responses;
-using NotificationService.Application.Models;
+using NotificationService.Common.Models.Responses;
+using NotificationService.Common.Models;
 using NotificationService.API.Helpers;
 using Newtonsoft.Json;
-using NotificationService.Application.Exceptions;
-using NotificationService.Application.Enums;
+using NotificationService.Common.Exceptions;
+using NotificationService.Common.Enums;
 namespace NotificationService.API.Middleware;
 
 //Hata yönetimi yapan middleware

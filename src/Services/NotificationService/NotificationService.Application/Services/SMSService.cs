@@ -1,5 +1,5 @@
 using NotificationService.Application.Contracts;
-using NotificationService.Application.Models.Requests;
+using NotificationService.Common.Models.Requests;
 using Twilio;
 using Microsoft.Extensions.Configuration;
 using Twilio.Rest.Api.V2010.Account;
@@ -7,9 +7,9 @@ using Twilio.Types;
 using AutoMapper;
 using NotificationService.Domain.Contracts;
 using NotificationService.Domain.Entities;
-using NotificationService.Application.Enums;
-using NotificationService.Application.Models;
-using NotificationService.Application.Exceptions;
+using NotificationService.Common.Enums;
+using NotificationService.Common.Models;
+using NotificationService.Common.Exceptions;
 
 namespace NotificationService.Application.Services;
 
@@ -22,19 +22,20 @@ public class SMSService : ISMSService
     private readonly IMapper _mapper;
     private readonly IRepository<NotificationLog> _notificationLogRepository;
 
-    public SMSService(IConfiguration configuration, IMapper mapper)
+    public SMSService(IConfiguration configuration, IMapper mapper, IRepository<NotificationLog> notificationLogRepository)
     {
         _accountSid = configuration["Twilio:AccountSid"]!;
         _authToken = configuration["Twilio:AuthToken"]!;
         _from = configuration["Twilio:FromPhoneNumber"]!;
         _mapper = mapper;
+        _notificationLogRepository = notificationLogRepository;
     }
     private async Task<bool> SendOrderSMS(OrderSMSRequestModel requestModel, string message)
     {
         SMSDto smsDto = new SMSDto
         {
             Message = message,
-            PhoneNumber = requestModel.PhoneNumber
+            PhoneNumber = requestModel.Order.Customer.PhoneNumber
         };
 
         NotificationLogDto notificationLogDto = new NotificationLogDto
@@ -42,7 +43,7 @@ public class SMSService : ISMSService
             Id = Guid.NewGuid(),
             IsDeleted = false,
             Receiver = smsDto.PhoneNumber,
-            ChannelType = ChannelType.Email,
+            ChannelType = ChannelType.SMS,
             TransactionId = requestModel.Order.Id,
             TransactionType = TransactionType.Order,
             LogDate = DateTime.UtcNow,
@@ -100,18 +101,18 @@ public class SMSService : ISMSService
 
         var message = "";
 
-        switch (requestModel.Order.OrderStatus)
+        switch (requestModel.Order.Status)
         {
             case OrderStatus.OperationalCancelled:
-                message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} numaralı siparişiniz operasyonel süreçlerden iptal edilmiştir. Teşekkür ederiz.";
+                message = $"Sayın {requestModel.Order.Customer.Name + " " + requestModel.Order.Customer.Surname}, {requestModel.Order.Id} numaralı siparişiniz operasyonel süreçlerden iptal edilmiştir. Teşekkür ederiz.";
                 await SendOrderSMS(requestModel, message);
                 break;
             case OrderStatus.Completed:
-                message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} siparişiniz başarıyla onaylandı. Teşekkür ederiz.";
+                message = $"Sayın {requestModel.Order.Customer.Name + " " + requestModel.Order.Customer.Surname}, {requestModel.Order.Id} siparişiniz başarıyla onaylandı. Teşekkür ederiz.";
                 await SendOrderSMS(requestModel, message);
                 break;
             case OrderStatus.Cancelled:
-                message = $"Sayın {requestModel.Order.CustomerNameSurname}, {requestModel.Order.Id} siparişiniz talebiniz üzerine iptal edilmiştir. Teşekkür ederiz.";
+                message = $"Sayın {requestModel.Order.Customer.Name + " " + requestModel.Order.Customer.Surname}, {requestModel.Order.Id} siparişiniz talebiniz üzerine iptal edilmiştir. Teşekkür ederiz.";
                 await SendOrderSMS(requestModel, message);
                 break;
         }
@@ -132,10 +133,10 @@ public class SMSService : ISMSService
 
             return msg;
         }
-        catch (Exception)
+        catch (Exception exp)
         {
             // TODO: logla
-            throw new SMSNotificationSendFailedException();
+            throw new SMSNotificationSendFailedException(exp.Message);
         }
     }
 
