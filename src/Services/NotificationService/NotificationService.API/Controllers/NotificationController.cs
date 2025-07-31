@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.Application.Contracts;
-using NotificationService.Application.Models.Requests;
+using NotificationService.Common.Models.Requests;
 
 namespace NotificationService.API.Controllers;
 

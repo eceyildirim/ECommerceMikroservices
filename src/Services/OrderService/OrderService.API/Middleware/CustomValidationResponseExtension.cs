@@ -7,7 +7,7 @@ namespace OrderService.API.Middleware;
 public static class CustomValidationResponseExtension
 {
     ///<summary>
-    /// FluentValidation kütüphanesinin hata mesajlarını özelleştirmek için kullanılır.
+    /// FluentValidation kütüphanesinin hata mesajlarını özelleştirmek için kullanılmıştır.
     /// </summary>
     /// 
     public static void UseCustomValidationResponse(this IServiceCollection services)

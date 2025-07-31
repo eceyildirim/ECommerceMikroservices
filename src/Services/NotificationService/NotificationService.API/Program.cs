@@ -9,6 +9,7 @@ using NotificationService.Infrastructure.Repositories;
 using NotificationService.Domain.Contracts;
 using NotificationService.Application.Contracts;
 using NotificationService.Application.Services;
+using NotificationService.Common.Models;
 using NotificationService.Infrastructure.Repositories;
 using NotificationService.Domain.Contracts;
 
@@ -18,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<AppSettings>(builder.Configuration);
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
